@@ -9,18 +9,16 @@ public class PolynomialField implements Field {
         if (pow == 4) {
             primePolynomial = 0b10011;
             mask = 0xfffffff0;
-            cardinality = (int) Math.pow(2, 4);
         }
         else if (pow == 8) {
             primePolynomial = 0b100011011;
             mask = 0xffffff00;
-            cardinality = (int) Math.pow(2, 8);
         }
         else {
             primePolynomial = 0b10110111101100011;
             mask = 0xffff0000;
-            cardinality = (int) Math.pow(2, 16);
         }
+        cardinality = (int) Math.pow(2, pow);
     }
 
     @Override
