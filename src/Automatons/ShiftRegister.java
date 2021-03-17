@@ -10,15 +10,12 @@ public class ShiftRegister {
     private Field field;
     private int n;
     private int[][] phiTable, psiTable;
-    private int[][] fFunctionTable;
-    private int[][][] hFunctionTable;
 
     public ShiftRegister(File initialData) {
         try (BufferedReader reader = new BufferedReader(new FileReader(initialData))) {
             field = FieldBuilder.createField(Integer.parseInt(reader.readLine()));
             n = Integer.parseInt(reader.readLine());
             checkN(n);
-            initTables();
             checkEmptyLine(reader.readLine());
             if (isTableInit(reader)) {
                 reader.reset();
@@ -29,7 +26,6 @@ public class ShiftRegister {
                 reader.reset();
                 //TODO: analytic init
             }
-            fillAutomatonTables();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,13 +41,6 @@ public class ShiftRegister {
             throw new IllegalArgumentException("incorrect n for p = 5");
         if ((p == 4 || p == 8 || p == 16 || p == 32 || p == 64 || p == 128 || p == 256) && !(n >= 1 && n <= 8))
             throw new IllegalArgumentException("incorrect n for p = 2^n");
-    }
-
-    private void initTables() {
-        phiTable = new int[(int) Math.pow(field.cardinality(), n)][field.cardinality()];
-        psiTable = new int[phiTable.length][field.cardinality()];
-        hFunctionTable = new int[phiTable.length][field.cardinality()][];
-        fFunctionTable = new int[phiTable.length][field.cardinality()];
     }
 
     private void checkEmptyLine(String line) {
@@ -73,20 +62,7 @@ public class ShiftRegister {
                     .toArray();
     }
 
-    private void fillAutomatonTables() {
-        int[] s = new int[n];
-        for (int i = 0; i < hFunctionTable.length && i < fFunctionTable.length; i++) {
-            int x = 0;
-            for (int j = 0; j < hFunctionTable[i].length && j < fFunctionTable[i].length; j++) {
-                hFunctionTable[i][j] = hFunction(s, x);
-                fFunctionTable[i][j] = fFunction(s, x);
-                x = field.sum(x, 1);
-            }
-            increaseByOne(s);
-        }
-    }
-
-    private int[] hFunction(int[] s, int x) {
+    public int[] hFunction(int[] s, int x) {
         int[] res = new int[s.length];
         int index = functionLineIndex(s);
         System.arraycopy(s, 1, res, 0, s.length - 1);
@@ -94,7 +70,7 @@ public class ShiftRegister {
         return res;
     }
 
-    private int fFunction(int[] s, int x) {
+    public int fFunction(int[] s, int x) {
         int index = functionLineIndex(s);
         return psiTable[index][phiTable[index][x]];
     }
@@ -115,19 +91,5 @@ public class ShiftRegister {
             if (arr[i] != 0)
                 break;
         }
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder result = new StringBuilder("h:\n");
-        for (int[][] table : hFunctionTable) {
-            for (int[] line : table)
-                result.append(Arrays.toString(line)).append(" ");
-            result.append("\n");
-        }
-        result.append("\nf:\n");
-        for (int[] line : fFunctionTable)
-            result.append(Arrays.toString(line)).append("\n");
-        return result.toString();
     }
 }
