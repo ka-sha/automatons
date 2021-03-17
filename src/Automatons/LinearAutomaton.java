@@ -3,14 +3,12 @@ package Automatons;
 import Fields.*;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class LinearAutomaton {
     private Field field;
     private int m, n, k;
     private int[][] A, B, C, D;
-    private int[][][] hFunctionTable, fFunctionTable;
 
     public LinearAutomaton(File initialData) {
         try (BufferedReader reader = new BufferedReader(new FileReader(initialData))) {
@@ -25,8 +23,6 @@ public class LinearAutomaton {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        initTables();
-        fillTables();
     }
 
     private void mnkInit(String mnkLine) {
@@ -64,31 +60,12 @@ public class LinearAutomaton {
         }
     }
 
-    private void initTables() {
-        hFunctionTable = new int[(int) Math.pow(field.cardinality(), n)][(int) Math.pow(field.cardinality(), m)][];
-        fFunctionTable = new int[(int) Math.pow(field.cardinality(), n)][(int) Math.pow(field.cardinality(), m)][];
-    }
-
-    private void fillTables() {
-        int[] s = new int[n];
-        int[] x = new int[m];
-
-        for (int i = 0; i < hFunctionTable.length && i < fFunctionTable.length; i++) {
-            for (int j = 0; j < hFunctionTable[i].length && j < fFunctionTable[i].length; j++) {
-                hFunctionTable[i][j] = hFunction(s, x);
-                fFunctionTable[i][j] = fFunction(s, x);
-                increaseByOne(x);
-            }
-            increaseByOne(s);
-        }
-    }
-
-    private int[] hFunction(int[] s, int[] x) {
+    public int[] hFunction(int[] s, int[] x) {
         checkLengthOf2Vectors(s.length, x.length);
         return vectorSum(mulOfVectorAndMatrix(s, A), mulOfVectorAndMatrix(x, B));
     }
 
-    private int[] fFunction(int[] s, int[] x) {
+    public int[] fFunction(int[] s, int[] x) {
         checkLengthOf2Vectors(s.length, x.length);
         return vectorSum(mulOfVectorAndMatrix(s, C), mulOfVectorAndMatrix(x, D));
     }
@@ -116,30 +93,5 @@ public class LinearAutomaton {
         for (int i = 0; i < a.length; i++)
             a[i] = field.sum(a[i], b[i]);
         return a;
-    }
-
-    private void increaseByOne(int[] arr) {
-        for (int i = arr.length - 1; i >= 0; i--) {
-            arr[i] = field.sum(arr[i], 1);
-            if (arr[i] != 0)
-                break;
-        }
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder result = new StringBuilder("h:\n");
-        createTable(result, hFunctionTable);
-        result.append("\nf:\n");
-        createTable(result, fFunctionTable);
-        return result.toString();
-    }
-
-    private void createTable(StringBuilder result, int[][][] src) {
-        for (int[][] table : src) {
-            for (int[] line : table)
-                result.append(Arrays.toString(line)).append(" ");
-            result.append("\n");
-        }
     }
 }
