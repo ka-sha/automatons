@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class ShiftRegister {
+public class ShiftRegister implements Automaton{
     private Field field;
     private int n;
     private int[][] phiTable, psiTable;
@@ -69,17 +69,26 @@ public class ShiftRegister {
         return table;
     }
 
-    public int[] hFunction(int[] s, int x) {
+    /**
+     * @param x в массиве всегда содержится одно число, массив введён для возможности использования интерфейса.
+     */
+    @Override
+    public int[] hFunction(int[] s, int[] x) {
         int[] res = new int[s.length];
         int index = functionLineIndex(s);
         System.arraycopy(s, 1, res, 0, s.length - 1);
-        res[res.length - 1] = phiTable[index][x];
+        res[res.length - 1] = phiTable[index][x[0]];
         return res;
     }
 
-    public int fFunction(int[] s, int x) {
+    /**
+     * @param x в массиве всегда содержится одно число, массив введён для возможности использования интерфейса.
+     * @return всегда одно число, но в обёртке массива, чтобы можно было пользоваться интерфейсом.
+     */
+    @Override
+    public int[] fFunction(int[] s, int[] x) {
         int index = functionLineIndex(s);
-        return psiTable[index][phiTable[index][x]];
+        return new int[]{psiTable[index][phiTable[index][x[0]]]};
     }
 
     private int functionLineIndex(int[] s) {
