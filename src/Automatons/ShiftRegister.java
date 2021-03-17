@@ -16,12 +16,13 @@ public class ShiftRegister {
             field = FieldBuilder.createField(Integer.parseInt(reader.readLine()));
             n = Integer.parseInt(reader.readLine());
             checkN(n);
+            initTables();
             checkEmptyLine(reader.readLine());
             if (isTableInit(reader)) {
                 reader.reset();
-                fillSRFunctions(phiTable, reader);
+                phiTable = parseSRFunctions(phiTable, reader);
                 checkEmptyLine(reader.readLine());
-                fillSRFunctions(psiTable, reader);
+                psiTable = parseSRFunctions(psiTable, reader);
             } else {
                 reader.reset();
                 //TODO: analytic init
@@ -43,6 +44,11 @@ public class ShiftRegister {
             throw new IllegalArgumentException("incorrect n for p = 2^n");
     }
 
+    private void initTables() {
+        phiTable = new int[(int) Math.pow(field.cardinality(), n)][field.cardinality()];
+        psiTable = new int[phiTable.length][field.cardinality()];
+    }
+
     private void checkEmptyLine(String line) {
         if (line == null)
             return;
@@ -55,11 +61,12 @@ public class ShiftRegister {
         return reader.readLine().matches("^(([\\d+\\s]){2,}([\\d+]))$");
     }
 
-    private void fillSRFunctions(int[][] table, BufferedReader reader) throws IOException {
+    private int[][] parseSRFunctions(int[][] table, BufferedReader reader) throws IOException {
         for (int i = 0; i < table.length; i++)
             table[i] = Stream.of(reader.readLine().split(" "))
                     .mapToInt(Integer::parseInt)
                     .toArray();
+        return table;
     }
 
     public int[] hFunction(int[] s, int x) {
