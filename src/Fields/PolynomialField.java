@@ -2,22 +2,15 @@ package Fields;
 
 public class PolynomialField implements Field {
     private final int primePolynomial;
-    private final int mask;
     private final int cardinality;
 
     public PolynomialField(int pow) {
-        if (pow == 4) {
-            primePolynomial = 0b10011;
-            mask = 0xfffffff0;
-        }
-        else if (pow == 8) {
-            primePolynomial = 0b100011011;
-            mask = 0xffffff00;
-        }
-        else {
-            primePolynomial = 0b10110111101100011;
-            mask = 0xffff0000;
-        }
+        if (pow == 4)
+            primePolynomial = 0b1_0011;
+        else if (pow == 8)
+            primePolynomial = 0b1_0001_1011;
+        else
+            primePolynomial = 0b1_0110_1111_0110_0011;
         cardinality = (int) Math.pow(2, pow);
     }
 
@@ -30,17 +23,13 @@ public class PolynomialField implements Field {
     public int mul(int a, int b) {
         int res = 0;
         while (b != 0) {
-            if ((b & 1) == 1) {
+            if ((b & 1) == 1)
                 res ^= a;
-                if (res >= primePolynomial) {
-                    res ^= primePolynomial;
-                    res ^= (res & mask);
-                }
-            }
-            if (((a & 0x40000000) == 0x40000000 && a > 0) || (((a & 0x40000000) == 0) && a < 0))
-                a ^= 0x80000000;
-            a = a << 1;
-            b = b >>> 1;
+            a <<= 1;
+
+            if ((a & cardinality) != 0)
+                a ^= primePolynomial;
+            b >>>= 1;
         }
         return res;
     }
