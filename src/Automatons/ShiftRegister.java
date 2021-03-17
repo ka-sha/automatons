@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class ShiftRegister implements Automaton{
+public class ShiftRegister {
     private Field field;
     private int n;
     private int[][] phiTable, psiTable;
@@ -62,33 +62,25 @@ public class ShiftRegister implements Automaton{
     }
 
     private int[][] parseSRFunctions(int[][] table, BufferedReader reader) throws IOException {
+        int[][] result = new int[table.length][table[0].length];
         for (int i = 0; i < table.length; i++)
-            table[i] = Stream.of(reader.readLine().split(" "))
+            result[i] = Stream.of(reader.readLine().split(" "))
                     .mapToInt(Integer::parseInt)
                     .toArray();
-        return table;
+        return result;
     }
 
-    /**
-     * @param x в массиве всегда содержится одно число, массив введён для возможности использования интерфейса.
-     */
-    @Override
-    public int[] hFunction(int[] s, int[] x) {
+    public int[] hFunction(int[] s, int x) {
         int[] res = new int[s.length];
         int index = functionLineIndex(s);
         System.arraycopy(s, 1, res, 0, s.length - 1);
-        res[res.length - 1] = phiTable[index][x[0]];
+        res[res.length - 1] = phiTable[index][x];
         return res;
     }
 
-    /**
-     * @param x в массиве всегда содержится одно число, массив введён для возможности использования интерфейса.
-     * @return всегда одно число, но в обёртке массива, чтобы можно было пользоваться интерфейсом.
-     */
-    @Override
-    public int[] fFunction(int[] s, int[] x) {
+    public int fFunction(int[] s, int x) {
         int index = functionLineIndex(s);
-        return new int[]{psiTable[index][phiTable[index][x[0]]]};
+        return psiTable[index][phiTable[index][x]];
     }
 
     private int functionLineIndex(int[] s) {

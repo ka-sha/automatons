@@ -5,7 +5,7 @@ import Fields.*;
 import java.io.*;
 import java.util.stream.Stream;
 
-public class LinearAutomaton implements Automaton {
+public class LinearAutomaton {
     private Field field;
     private int m, n, k;
     private int[][] A, B, C, D;
@@ -60,13 +60,11 @@ public class LinearAutomaton implements Automaton {
         }
     }
 
-    @Override
     public int[] hFunction(int[] s, int[] x) {
         checkLengthOf2Vectors(s.length, x.length);
         return vectorSum(mulOfVectorAndMatrix(s, A), mulOfVectorAndMatrix(x, B));
     }
 
-    @Override
     public int[] fFunction(int[] s, int[] x) {
         checkLengthOf2Vectors(s.length, x.length);
         return vectorSum(mulOfVectorAndMatrix(s, C), mulOfVectorAndMatrix(x, D));
