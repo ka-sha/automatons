@@ -60,12 +60,12 @@ public class LinearAutomaton {
         }
     }
 
-    public int[] hFunction(int[] s, int[] x) {
+    private int[] hFunction(int[] s, int[] x) {
         checkLengthOf2Vectors(s.length, x.length);
         return vectorSum(mulOfVectorAndMatrix(s, A), mulOfVectorAndMatrix(x, B));
     }
 
-    public int[] fFunction(int[] s, int[] x) {
+    private int[] fFunction(int[] s, int[] x) {
         checkLengthOf2Vectors(s.length, x.length);
         return vectorSum(mulOfVectorAndMatrix(s, C), mulOfVectorAndMatrix(x, D));
     }
